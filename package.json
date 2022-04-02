@@ -1,0 +1,30 @@
+{
+  "name": "dfsas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "npm install && npm run migration:run && node .",
+    "start:dev": "node .",
+    "migration:run": "node src/infrastructure/storage/database/connections/main.connection.js up",
+    "migration:revert": "node src/infrastructure/storage/database/connections/main.connection.js down",
+    "migration:create": "node src/infrastructure/storage/database/connections/main.connection.js add migration",
+    "style": "prettier --write \"./**/*.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Rozghon",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "axios": "^0.26.1",
+    "bcrypt": "^5.0.1",
+    "form-data": "^4.0.0",
+    "formidable": "^2.0.1",
+    "mysql-migrations": "^1.0.7",
+    "mysql2": "^2.3.3",
+    "uuid": "^8.3.2",
+    "ws": "^8.5.0"
+  }
+}
