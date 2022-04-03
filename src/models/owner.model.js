@@ -43,7 +43,8 @@ const OwnerRepository = (connection) => ({
   create: async (ownerModel) => {
     const {ttl, accessType, address, metadata = {}, fileId} = ownerModel;
     const createOwnerQuery =
-      'INSERT INTO `owners` (`ttl`, `accessType`, `address`, `metadata`, `fileId`) VALUE (?, ?, ?, ?, ?);';
+      'INSERT INTO `owners` (`ttl`, `accessType`, `address`, `metadata`, `fileId`) VALUE (?, ?, ?, ?, ?)\n' +
+      'ON DUPLICATE KEY UPDATE `id` = `id`;';
     const createOwnerParams = [ttl, accessType, address, JSON.stringify(metadata), fileId];
     await connection.query(createOwnerQuery, createOwnerParams);
   },

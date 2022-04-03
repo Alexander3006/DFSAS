@@ -10,7 +10,8 @@ module.exports = {
     '    `fileId`     INT,\n' +
     '    `createdAt`  TIMESTAMP DEFAULT NOW() NOT NULL,\n' +
     '    PRIMARY KEY (`id`),\n' +
-    '    FOREIGN KEY (`fileId`) REFERENCES `files` (`id`)\n' +
+    '    FOREIGN KEY (`fileId`) REFERENCES `files` (`id`),\n' +
+    '    UNIQUE KEY `owners_address_fileId` (`address`, `fileId`)' +
     ');',
   down: 'DROP TABLE IF EXISTS `owners`;',
 };

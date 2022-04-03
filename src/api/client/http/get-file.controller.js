@@ -11,7 +11,7 @@ const getFileController = async (container, {connection, context}) => {
     const getFileByHashDto = FindFileByHashDTO.fromRaw(payload);
     const fileStream = await fileService.getFileByHash(getFileByHashDto);
     if (!fileService) throw new Error('File not found or not available');
-    await connection.send(fileService);
+    await connection.send(fileStream);
     return;
   } catch (err) {
     console.log(err);
