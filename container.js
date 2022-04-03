@@ -3,6 +3,15 @@
 //configs
 const {NetworkConfig, FileStorageConfig, ApiConfig} = require('./src/config');
 
+//crypto
+const {EncryptionService} = require('./src/infrastructure/crypto/encryption.service');
+const {HashService} = require('./src/infrastructure/crypto/hash.service');
+const {SignatureService} = require('./src/infrastructure/crypto/signature.service');
+
+const signatureService = new SignatureService();
+const hashService = new HashService();
+const encryptionService = new EncryptionService();
+
 //transport
 const {WebSocketClient} = require('./src/infrastructure/transport/websocket/websocket.client');
 const {WebSocketServer} = require('./src/infrastructure/transport/websocket/websocket.server');
@@ -35,6 +44,10 @@ const networkWebsocketServer = new WebSocketServer({
 });
 const networkHttpServer = new HttpServer({router: networkRouter, config: NetworkConfig.http});
 const networkWebsocketClientManager = new WebSocketClient({router: networkRouter});
+
+//access
+const {VerificationService} = require('./src/services/verification.service');
+const verificationService = new VerificationService({memoryCache, signatureService});
 
 //api
 const apiRouter = new Router();
@@ -70,6 +83,8 @@ const container = {
   networkHttpServer,
   networkWebsocketServer,
   networkWebsocketClientManager,
+  //access
+  verificationService,
   //api
   apiRouter,
   apiHttpServer,

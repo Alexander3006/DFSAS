@@ -2,13 +2,13 @@
 
 class FindFileByHashDTO {
   constructor(raw) {
-    const {hash, password} = raw;
+    const {hash, address} = raw;
     this.hash = hash;
-    this.password = password;
+    this.address = address;
   }
   static fromRaw(raw) {
     FindFileByHashDTO.validate(raw);
-    const dto = new SearchFileByHashDTO(raw);
+    const dto = new FindFileByHashDTO(raw);
     return dto;
   }
 
@@ -16,15 +16,20 @@ class FindFileByHashDTO {
     //TODO
     return true;
   }
+
+  toMessage() {
+    const {hash} = this;
+    return `${hash}`;
+  }
 }
 
 class SaveFileDTO {
   constructor(raw) {
-    const {readFileStream, checksum, password, metadata, accessType, ttl, name} = raw;
+    const {readFileStream, checksum, address, metadata, accessType, ttl, name} = raw;
     this.ttl = ttl;
     this.name = name;
     this.checksum = checksum;
-    this.password = password;
+    this.address = address;
     this.metadata = metadata ?? {};
     this.accessType = accessType;
     this.readFileStream = readFileStream;
@@ -39,6 +44,11 @@ class SaveFileDTO {
   static validate(raw) {
     //TODO
     return true;
+  }
+
+  toMessage() {
+    const {checksum, name} = this;
+    return `${name}:${checksum}`;
   }
 }
 

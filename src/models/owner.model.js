@@ -12,10 +12,10 @@ class OwnerModelError extends Error {}
 
 class OwnerModel {
   constructor(raw) {
-    const {id, ttl, accessType, password, metadata, fileId, createdAt} = raw;
+    const {id, ttl, accessType, address, metadata, fileId, createdAt} = raw;
     this.id = id;
     this.accessType = accessType; //FileAccessType(string)
-    this.password = password; //string
+    this.address = address; //string
     this.metadata = metadata; //json -> object
     this.ttl = ttl; //number(int) days
     this.fileId = fileId; //number(int)
@@ -29,11 +29,11 @@ class OwnerModel {
   }
 
   static validate(raw) {
-    const {ttl, accessType, password, metadata} = raw;
+    const {ttl, accessType, address, metadata} = raw;
     if (!Number.isInteger(ttl) || ttl <= 0) throw new OwnerModelError('Invalid file ttl');
     if (!Object.values(FileAccessType).includes(accessType))
       throw new OwnerModelError('Invalid file access type');
-    if (!notEmptyValue(password)) throw new OwnerModelError('Invalid file password');
+    if (!notEmptyValue(address)) throw new OwnerModelError('Invalid file address');
     if (!!metadata && typeof metadata !== 'object')
       throw new OwnerModelError('Invalid file metadata');
   }
@@ -41,10 +41,10 @@ class OwnerModel {
 
 const OwnerRepository = (connection) => ({
   create: async (ownerModel) => {
-    const {ttl, accessType, password, metadata = {}, fileId} = ownerModel;
+    const {ttl, accessType, address, metadata = {}, fileId} = ownerModel;
     const createOwnerQuery =
-      'INSERT INTO `owners` (`ttl`, `accessType`, `password`, `metadata`, `fileId`) VALUE (?, ?, ?, ?, ?);';
-    const createOwnerParams = [ttl, accessType, password, JSON.stringify(metadata), fileId];
+      'INSERT INTO `owners` (`ttl`, `accessType`, `address`, `metadata`, `fileId`) VALUE (?, ?, ?, ?, ?);';
+    const createOwnerParams = [ttl, accessType, address, JSON.stringify(metadata), fileId];
     await connection.query(createOwnerQuery, createOwnerParams);
   },
 
