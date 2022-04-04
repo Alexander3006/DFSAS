@@ -29,9 +29,10 @@ class VerificationService {
     }
   }
 
-  async verify({message, nonce, signature, publicKey}) {
+  async verify(signatureDTO) {
     const {memoryCache, signatureService} = this;
     try {
+      const {message, nonce, signature, publicKey} = signatureDTO;
       const address = signatureService.publicKeyToAddress(publicKey);
       const key = VerificationService.getKeyNonce(address);
       const cacheNonce = await memoryCache.get(key);
