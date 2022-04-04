@@ -7,7 +7,9 @@ const getTempNonce = async (container, {connection, context}) => {
   const {verificationService, signatureService} = container;
   try {
     const payload = JSON.parse(await connection.payload());
-    const {publicKey} = payload;
+    const {
+      data: {publicKey},
+    } = payload;
     const address = signatureService.publicKeyToAddress(publicKey);
     const nonce = await verificationService.generateNonce({address});
     await connection.send(

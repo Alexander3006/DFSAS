@@ -1,6 +1,6 @@
 'use strict';
 
-const {SignatureDTO} = require('../../../services/dto/signature.dto');
+const {SignatureDTO} = require('../../../../services/dto/signature.dto');
 
 const verifivationGuard = async (container, signature, address) => {
   const {verificationService} = container;
