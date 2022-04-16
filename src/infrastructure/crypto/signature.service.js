@@ -21,6 +21,11 @@ class SignatureService {
     return address;
   }
 
+  async getPublicKey(privateKey) {
+    const publicKey = await ed25519.getPublicKey(privateKey);
+    return uint8toHex(publicKey);
+  }
+
   async signMessage(message, privateKey) {
     const hexMessage = Buffer.from(message).toString('hex');
     const signature = await ed25519.sign(hexMessage, privateKey);
