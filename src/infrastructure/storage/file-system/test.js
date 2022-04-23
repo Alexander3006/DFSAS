@@ -7,7 +7,7 @@ const {FileStorage, FileStorageConfig} = require('./index');
 //SETTINGS
 const config = new FileStorageConfig({storage: './storage'});
 const fileStorage = new FileStorage({config});
-const file = '/root/dfsas/package-lock.json';
+const file = '/root/DFSAS/package-lock.json';
 
 //TEST
 const testChecksum = async (file) => {

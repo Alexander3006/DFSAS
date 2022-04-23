@@ -10,8 +10,9 @@ const useWebSocketClientApi = (container) => {
 };
 
 const useHttpClientApi = (container) => {
-  const {getFileController, uploadFileController} = getHttpControllers(container);
+  const {getFileController, uploadFileController, getTempNonce} = getHttpControllers(container);
   const {apiRouter} = container;
+  apiRouter.registerEndpoint(getTempNonce);
   apiRouter.registerEndpoint(getFileController);
   apiRouter.registerEndpoint(uploadFileController);
 };

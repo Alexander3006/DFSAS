@@ -32,7 +32,7 @@ const getTempNonce = async (container, {connection, context}) => {
 
 module.exports = (container) =>
   new HttpEndpoint({
-    method: EndpointMethods.GET,
+    method: EndpointMethods.POST,
     path: '/client/get-temp-nonce',
     handler: getTempNonce.bind(null, container),
   });

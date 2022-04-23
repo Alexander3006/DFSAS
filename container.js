@@ -78,6 +78,8 @@ const container = {
   //storage
   db,
   fileStorage,
+  //crypto
+  signatureService,
   //network
   networkRouter,
   networkHttpServer,

@@ -5,15 +5,16 @@ const {EndpointMethods} = require('../../../infrastructure/transport/interfaces/
 const {HttpEndpoint} = require('../../../infrastructure/transport/router/http.endpoint');
 const {SaveFileDTO} = require('../../../services/dto/file.dto');
 const {SignatureDTO} = require('../../../services/dto/signature.dto');
+const {verifivationGuard} = require('./guards/verification.guard');
 
 const uploadFileController = async (container, {connection, context}) => {
   const {fileService} = container;
-  const {files, data, clear} = await connection.multiform();
+  const {files, data: body, clear} = await connection.multiform();
   try {
     const {
       file: {filepath},
     } = files;
-    const payload = JSON.parse(data.payload);
+    const payload = JSON.parse(body.payload);
     const {data, signature} = payload;
     const readFileStream = fs.createReadStream(filepath, 'utf-8');
     const saveFileDTO = SaveFileDTO.fromRaw({
