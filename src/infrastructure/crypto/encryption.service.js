@@ -1,12 +1,13 @@
 'use strict';
 
+const crypto = require('crypto');
+
 class EncryptionService {
   constructor() {}
 
   encrypt(str, key) {
     const iv = crypto.randomBytes(12);
     const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(key, 'base64'), iv);
-
     const enc = cipher.update(str, 'utf-8');
     const enc2 = cipher.final();
     return Buffer.concat([enc, enc2, iv, cipher.getAuthTag()]).toString('base64');
@@ -19,7 +20,7 @@ class EncryptionService {
     const payload = enc.slice(0, enc.length - 28);
     const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(key, 'base64'), iv);
     decipher.setAuthTag(tag);
-    const message = decipher.update(payload, null, 'utf8') + decipher.final('utf8');
+    const message = decipher.update(payload, undefined, 'utf-8') + decipher.final('utf-8');
     return message;
   }
 }

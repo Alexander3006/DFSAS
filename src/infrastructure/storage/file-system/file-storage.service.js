@@ -7,7 +7,7 @@ const path = require('path');
 
 class FileStorageError extends Error {}
 
-//TODO: add mutex
+//TODO: add mutex ??
 class FileStorage {
   constructor({config}) {
     this.config = config;
@@ -121,8 +121,8 @@ class FileStorage {
 
   async checkFileExistence({filepath}) {
     try {
-      const exist = fs.promises.access(filepath);
-      return exist;
+      const exist = await fs.promises.access(filepath);
+      return !!exist;
     } catch (err) {
       console.log(err);
       throw new FileStorageError('Check file existance error');

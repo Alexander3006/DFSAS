@@ -9,6 +9,10 @@ class BaseRouter {
     const {transport: TransportType} = metadata;
     throw new BaseRouterError('');
   }
+
+  async registerEndpoint(endpoint) {
+    throw new BaseRouterError('');
+  }
 }
 
 module.exports = {

@@ -1,5 +1,6 @@
 'use strict';
 
+//TODO: types
 class FileStorageConfig {
   constructor(config) {
     const valid = FileStorageConfig.validate(config);

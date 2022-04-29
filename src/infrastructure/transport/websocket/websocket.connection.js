@@ -12,9 +12,9 @@ class WebSocketConnection extends BaseConnection {
     this.isAlive = true;
   }
 
-  //route() {}
+  route() {}
 
-  // async payload() {}
+  async payload() {}
 
   async send(data) {
     const {socket} = this;

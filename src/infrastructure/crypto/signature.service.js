@@ -2,7 +2,7 @@
 
 const crypto = require('crypto');
 const ed25519 = require('@noble/ed25519');
-const {uint8toHex, hexToUint8} = require('./helpers');
+const {uint8toHex, hexToUint8} = require('./helpers.js');
 
 class SignatureService {
   constructor() {}
