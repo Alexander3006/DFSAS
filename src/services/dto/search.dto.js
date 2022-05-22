@@ -26,9 +26,10 @@ class SearchFileByHashDTO {
 
 class SearchFileResponseDTO {
   constructor(raw) {
-    const {requestId, payload} = raw;
+    const {requestId, payload, nodeInfo} = raw;
     this.requestId = requestId;
     this.payload = payload;
+    this.nodeInfo = nodeInfo;
   }
 
   static fromRaw(raw) {

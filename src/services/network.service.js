@@ -2,12 +2,14 @@
 
 const {default: axios} = require('axios');
 const {RequestDTO} = require('./dto/network.dto');
+const {NodeInfoDTO} = require('./dto/node-info.dto');
 
 class NetworkServiceError extends Error {}
 
 class NetworkService {
-  constructor({config, networkWebsocketClientManager, memoryCache}) {
+  constructor({config, node, networkWebsocketClientManager, memoryCache}) {
     this.config = config;
+    this.node = node;
     this.memoryCache = memoryCache;
     this.networkWebsocketClientManager = networkWebsocketClientManager;
   }
@@ -45,9 +47,7 @@ class NetworkService {
           payload: payload,
         },
       });
-      for (const peer of peers.values()) {
-        await peer.send(broadcastData);
-      }
+      await Promise.allSettled([...peers.values()].map((peer) => peer.send(broadcastData)));
       return;
     } catch (err) {
       console.log(err);
@@ -55,9 +55,12 @@ class NetworkService {
     }
   }
 
-  async callback(url, payload) {
+  async callback(requestDTO, payload) {
+    const {node} = this;
     try {
-      const {data} = await axios.post(url, payload);
+      const nodeInfo = NodeInfoDTO.fromRaw({...node});
+      const {requestId, callbackUrl} = requestDTO;
+      const {data} = await axios.post(callbackUrl, {payload, requestId, nodeInfo});
       return data;
     } catch (err) {
       console.log(err);

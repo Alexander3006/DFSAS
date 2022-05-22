@@ -1,6 +1,6 @@
 'use strict';
 
-const {SignatureDTO} = require('../../../../services/dto/signature.dto');
+const {SignatureDTO} = require('../../../services/dto/signature.dto');
 
 const verifivationGuard = async (container, signature, address) => {
   const {verificationService} = container;
@@ -9,7 +9,6 @@ const verifivationGuard = async (container, signature, address) => {
   try {
     const verifiedAddress = await verificationService.verify(signature);
     if (!verifiedAddress) throw new Error('Not verified');
-    console.dir(verifiedAddress);
     if (address !== verifiedAddress) throw new Error('Address not verified');
     return address;
   } catch (err) {

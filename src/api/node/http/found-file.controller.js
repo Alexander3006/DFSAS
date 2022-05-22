@@ -8,7 +8,7 @@ const foundFileCallbackController = async (container, {connection, context}) => 
   const {memoryCache, apiWebsocketServer} = container;
   try {
     const payload = JSON.parse(await connection.payload());
-    const {requestId, payload: file} = SearchFileResponseDTO.fromRaw(payload);
+    const {requestId, payload: file, nodeInfo} = SearchFileResponseDTO.fromRaw(payload);
     const clientId = await memoryCache.get(requestId);
     if (clientId) {
       const socket = apiWebsocketServer.getClient(clientId);
@@ -16,7 +16,10 @@ const foundFileCallbackController = async (container, {connection, context}) => 
         await socket.send(
           JSON.stringify({
             event: 'FILE_FOUND',
-            payload: file,
+            payload: {
+              file,
+              node: nodeInfo,
+            },
           }),
         );
       }

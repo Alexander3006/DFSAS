@@ -5,7 +5,7 @@ const {EndpointMethods} = require('../../../infrastructure/transport/interfaces/
 const {HttpEndpoint} = require('../../../infrastructure/transport/router/http.endpoint');
 const {SaveFileDTO} = require('../../../services/dto/file.dto');
 const {SignatureDTO} = require('../../../services/dto/signature.dto');
-const {verifivationGuard} = require('./guards/verification.guard');
+const {verifivationGuard} = require('../guards/verification.guard');
 
 const uploadFileController = async (container, {connection, context}) => {
   const {fileService} = container;

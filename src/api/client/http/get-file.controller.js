@@ -4,7 +4,7 @@ const {EndpointMethods} = require('../../../infrastructure/transport/interfaces/
 const {HttpEndpoint} = require('../../../infrastructure/transport/router/http.endpoint');
 const {FindFileByHashDTO} = require('../../../services/dto/file.dto');
 const {SignatureDTO} = require('../../../services/dto/signature.dto');
-const {verifivationGuard} = require('./guards/verification.guard');
+const {verifivationGuard} = require('../guards/verification.guard');
 
 const getFileController = async (container, {connection, context}) => {
   const {fileService} = container;

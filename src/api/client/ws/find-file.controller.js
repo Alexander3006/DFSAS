@@ -6,6 +6,7 @@ const {FindFileByHashDTO} = require('../../../services/dto/file.dto');
 const {RequestDTO} = require('../../../services/dto/network.dto');
 const {SearchFileByHashDTO} = require('../../../services/dto/search.dto');
 const {MemoryCache} = require('../../../system/memory-cache');
+const {verifivationGuard} = require('../guards/verification.guard');
 
 const FIND_FILE_TIME = 5 * 60 * 1000; //default 5 min
 
@@ -13,11 +14,16 @@ const findFileController = async (container, {connection, context}) => {
   const {NetworkConfig, searchService, memoryCache, pubsub} = container;
   try {
     const {
-      payload: {data},
+      payload: {data, signature},
       metadata: {client},
     } = context;
     //create dto and validation
     const findFileByHashDto = FindFileByHashDTO.fromRaw(data);
+    //verifivation
+    const message = findFileByHashDto.toMessage();
+    const signatureDTO = SignatureDTO.fromRaw({...signature, message});
+    await verifivationGuard(container, signatureDTO, findFileByHashDto.address);
+    //
     const requestDto = RequestDTO.fromRaw({
       requestId: uuid(),
       expirationTime: Date.now() + FIND_FILE_TIME,
@@ -70,6 +76,6 @@ const findFileController = async (container, {connection, context}) => {
 
 module.exports = (container) =>
   new WebSocketEndpoint({
-    path: '/client/find-file',
+    path: 'FIND_FILE_BY_HASH',
     handler: findFileController.bind(null, container),
   });

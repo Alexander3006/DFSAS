@@ -23,7 +23,8 @@ class WebSocketClient {
     connections.set(serverId, connection);
     //heartbeat
     let pingTimeout;
-    const heartbeat = () => {
+    const heartbeat = async () => {
+      await connection.pong();
       clearTimeout(pingTimeout);
       pingTimeout = setTimeout(async () => {
         await connection.destroy();

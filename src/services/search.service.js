@@ -18,10 +18,8 @@ class SearchService {
     try {
       const fileModel = await fileService.findFileByHash(payload);
       if (fileModel)
-        await networkService
-          .callback(request.callbackUrl, fileModel)
-          .catch((err) => console.log(err));
-      await networkService.broadcastRequestToPeers(path, request, payload);
+        await networkService.callback(request, fileModel).catch((err) => console.log(err));
+      await networkService.broadcastRequestToPeers('FIND_FILE', request, payload);
       return fileModel;
     } catch (err) {
       console.log(err);

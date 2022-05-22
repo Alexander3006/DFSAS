@@ -10,11 +10,11 @@ const findFileController = async (container, {connection, context}) => {
       payload: {data},
     } = context;
     const {request, payload} = data;
-    const findFileByHashDto = FindFileByHashDTO.fromRaw(payload);
+    const findFileByHashDTO = FindFileByHashDTO.fromRaw(payload);
     const requestDto = RequestDTO.fromRaw(request);
     const searchFileByHashDTO = SearchFileByHashDTO.fromRaw({
       request: requestDto,
-      payload: findFileByHashDto,
+      payload: findFileByHashDTO,
     });
     await searchService.searchFileByHash(searchFileByHashDTO);
     return;
@@ -32,6 +32,6 @@ const findFileController = async (container, {connection, context}) => {
 
 module.exports = (container) =>
   new WebSocketEndpoint({
-    path: '/node/find-file',
+    path: 'FIND_FILE',
     handler: findFileController.bind(null, container),
   });

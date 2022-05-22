@@ -1,7 +1,7 @@
 'use strict';
 
 //configs
-const {NetworkConfig, FileStorageConfig, ApiConfig} = require('./src/config');
+const {NetworkConfig, FileStorageConfig, ApiConfig, NodeInfo} = require('./src/config');
 
 //crypto
 const {EncryptionService} = require('./src/infrastructure/crypto/encryption.service');
@@ -61,6 +61,7 @@ const apiHttpServer = new HttpServer({router: apiRouter, config: ApiConfig.http}
 const {NetworkService} = require('./src/services/network.service');
 const networkService = new NetworkService({
   config: NetworkConfig,
+  node: NodeInfo,
   networkWebsocketClientManager,
   memoryCache,
 });
