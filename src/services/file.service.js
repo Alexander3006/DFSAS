@@ -2,6 +2,7 @@
 
 const {FileModel} = require('../models/file.model');
 const {FileAccessType, OwnerModel} = require('../models/owner.model');
+const {FindFilesByNameDTO} = require('./dto/file.dto');
 const {FindFileByHashDTO, SaveFileDTO} = require('./dto/file.dto');
 
 class FileServiceError extends Error {}
@@ -18,15 +19,16 @@ class FileService {
     } = this;
     if (!(findFileByHashDTO instanceof FindFileByHashDTO))
       throw new FileServiceError('Invalid find file dto');
-    const {hash, address} = FindFileByHashDTO;
+    const {hash, address} = findFileByHashDTO;
     const {FileRepository} = unitOfWork.repositories;
     try {
-      const {owners, ...file} = await FileRepository.findOne({hash}, false);
+      const fileModel = await FileRepository.findOne({hash}, false);
+      if (!fileModel) return null;
+      const {owners, ...file} = fileModel;
       const accesses = owners.filter((owner) => {
         const {accessType, address: ownerAddress} = owner;
         const access = accessType !== FileAccessType.HIDDEN || address === ownerAddress;
-        if (!access) return owner;
-        return false;
+        return access;
       });
       if (!accesses.length) return null;
       return FileModel.fromRaw({...file, owners: accesses});
@@ -36,18 +38,48 @@ class FileService {
     }
   }
 
+  async findFilesByName(findFilesByNameDTO) {
+    const {
+      db: {unitOfWork},
+    } = this;
+    if (!(findFilesByNameDTO instanceof FindFilesByNameDTO))
+      throw new FileServiceError('Invalid find file dto');
+    const {name, address} = findFilesByNameDTO;
+    const {FileRepository} = unitOfWork.repositories;
+    try {
+      const fileModels = await FileRepository.find({name}, false);
+      const accessesFileModels = fileModels
+        .map((fileModel) => {
+          const {owners, ...file} = fileModel;
+          const accesses = owners.filter((owner) => {
+            const {accessType, address: ownerAddress} = owner;
+            const access = accessType !== FileAccessType.HIDDEN || address === ownerAddress;
+            return access;
+          });
+          if (!accesses.length) return false;
+          return FileModel.fromRaw({...file, owners: accesses});
+        })
+        .filter((fileModel) => !!fileModel);
+      return accessesFileModels;
+    } catch (err) {
+      console.log(err);
+      throw new FileServiceError('Find file by name error');
+    }
+  }
+
   async getFileByHash(findFileByHashDTO) {
     const {fileStorage} = this;
     if (!(findFileByHashDTO instanceof FindFileByHashDTO))
       throw new FileServiceError('Invalid find file dto');
     const {hash, address} = findFileByHashDTO;
     try {
-      const {owners, ...file} = await this.findFileByHash({hash, address});
+      const fileModel = await this.findFileByHash(findFileByHashDTO);
+      if (!fileModel) return null;
+      const {owners, ...file} = fileModel;
       const accesses = owners.filter((owner) => {
         const {accessType, address: ownerAddress} = owner;
         const access = accessType !== FileAccessType.CLOSED || ownerAddress === address;
-        if (!access) return owner;
-        return false;
+        return access;
       });
       if (!accesses.length) return null;
       const fileStream = await fileStorage.getFileStream({hash});
@@ -120,11 +152,11 @@ class FileService {
       const accesses = owners.filter((owner) => {
         const {address: ownerAddress} = owner;
         const access = address === ownerAddress;
-        if (access) return owner;
-        return false;
+        return access;
       });
       await Promise.all(accesses.map((access) => OwnerRepository.delete(access)));
-      if (owners.length <= accesses.length) {
+
+      if (owners.length > accesses.length) {
         await transaction.commit();
         return;
       }

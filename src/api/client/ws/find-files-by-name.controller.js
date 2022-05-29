@@ -2,63 +2,65 @@
 
 const {v4: uuid} = require('uuid');
 const {WebSocketEndpoint} = require('../../../infrastructure/transport/router/websocket.endpoint');
-const {FindFileByHashDTO} = require('../../../services/dto/file.dto');
+const {FindFilesByNameDTO} = require('../../../services/dto/file.dto');
 const {RequestDTO} = require('../../../services/dto/network.dto');
-const {SearchFileByHashDTO} = require('../../../services/dto/search.dto');
+const {SearchFilesByNameDTO} = require('../../../services/dto/search.dto');
+const {SignatureDTO} = require('../../../services/dto/signature.dto');
 const {MemoryCache} = require('../../../system/memory-cache');
 const {verifivationGuard} = require('../guards/verification.guard');
 
 const FIND_FILE_TIME = 5 * 60 * 1000; //default 5 min
 
-const findFileController = async (container, {connection, context}) => {
+const findFilesController = async (container, {connection, context}) => {
   const {NetworkConfig, searchService, memoryCache, pubsub} = container;
   try {
     const {
-      payload: {data, signature},
+      payload: {payload},
       metadata: {client},
     } = context;
+    const {signature, data, timeout} = JSON.parse(payload);
     //create dto and validation
-    const findFileByHashDto = FindFileByHashDTO.fromRaw(data);
+    const findFilesByNameDTO = FindFilesByNameDTO.fromRaw(data);
     //verifivation
-    const message = findFileByHashDto.toMessage();
+    const message = findFilesByNameDTO.toMessage();
     const signatureDTO = SignatureDTO.fromRaw({...signature, message});
-    await verifivationGuard(container, signatureDTO, findFileByHashDto.address);
+    await verifivationGuard(container, signatureDTO, findFilesByNameDTO.address);
     //
-    const requestDto = RequestDTO.fromRaw({
+    const requestDTO = RequestDTO.fromRaw({
       requestId: uuid(),
-      expirationTime: Date.now() + FIND_FILE_TIME,
+      expirationTime: Date.now() + (timeout ?? FIND_FILE_TIME),
       callbackUrl: `${NetworkConfig.http.callback}/node/file-found`,
     });
-    const searchFileByHashDTO = SearchFileByHashDTO.fromRaw({
-      request: requestDto,
-      payload: findFileByHashDto,
+    const searchFilesByNameDTO = SearchFilesByNameDTO.fromRaw({
+      request: requestDTO,
+      payload: findFilesByNameDTO,
     });
     //requestId - client set to cache
-    await memoryCache.set(requestDto.requestId, client, FIND_FILE_TIME / 1000);
-    const expiresEvent = MemoryCache.expiresEvent(requestDto.requestId);
+    await memoryCache.set(requestDTO.requestId, client, (timeout ?? FIND_FILE_TIME) / 1000);
+    const expiresEvent = MemoryCache.expiresEvent(requestDTO.requestId);
     //on search finished
     await pubsub.sub(expiresEvent, async function onExpires() {
       await connection.send(
         JSON.stringify({
           event: 'FILE_SEARCH_FINISHED',
           payload: {
-            hash: findFileByHashDto.hash,
-            requestId: requestDto.requestId,
+            name: findFilesByNameDTO.name,
+            requestId: requestDTO.requestId,
           },
         }),
       );
       await pubsub.unsub(expiresEvent, onExpires);
     });
     //start search
-    await searchService.searchFileByHash(searchFileByHashDTO);
+    await searchService.searchFilesByName(searchFilesByNameDTO);
     //send search data
     await connection.send(
       JSON.stringify({
         event: 'FILE_SEARCH_STARTED',
         payload: {
-          hash: findFileByHashDto.hash,
-          requestId: requestDto.requestId,
-          expirationTime: requestDto.expirationTime,
+          name: findFilesByNameDTO.name,
+          requestId: requestDTO.requestId,
+          expirationTime: requestDTO.expirationTime,
         },
       }),
     );
@@ -76,6 +78,6 @@ const findFileController = async (container, {connection, context}) => {
 
 module.exports = (container) =>
   new WebSocketEndpoint({
-    path: 'FIND_FILE_BY_HASH',
-    handler: findFileController.bind(null, container),
+    path: 'FIND_FILES_BY_NAME',
+    handler: findFilesController.bind(null, container),
   });

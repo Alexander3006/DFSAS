@@ -54,9 +54,7 @@ const OwnerRepository = (connection) => ({
     const getOwnersParams = [fileId];
     const ownerRaws = await connection
       .query(getOwnersQuery, getOwnersParams)
-      .then(([ownerRaws]) =>
-        ownerRaws.map(({metadata, ...raw}) => ({...raw, metadata: JSON.parse(metadata)})),
-      );
+      .then(([ownerRaws]) => ownerRaws);
     const owners = ownerRaws.map((ownerRaw) => OwnerModel.fromRaw(ownerRaw));
     return owners;
   },

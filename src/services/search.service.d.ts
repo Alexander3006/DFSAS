@@ -13,4 +13,6 @@ export declare class SearchService {
   public async searchFileByHash(
     searchFileByHashDTO: SearchFileByHashDTO,
   ): Promise<FileModel | void>;
+
+  public async searchFilesByName();
 }

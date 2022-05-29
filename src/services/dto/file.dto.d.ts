@@ -44,3 +44,21 @@ export declare class SaveFileDTO {
 
   public toMessage(): string;
 }
+
+type FindFilesByNameRaw = {
+  name: string;
+  address: string;
+};
+
+export declare class FindFilesByNameDTO {
+  public readonly name: string;
+  public readonly address: string;
+
+  constructor(raw: FindFilesByNameRaw);
+
+  public static fromRaw(raw: FindFilesByNameRaw): FindFilesByNameDTO;
+
+  public static validate(raw: FindFilesByNameRaw): boolean;
+
+  public toMessage(): string;
+}

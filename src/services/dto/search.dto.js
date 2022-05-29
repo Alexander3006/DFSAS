@@ -1,5 +1,6 @@
 'use strict';
 
+const {FindFilesByNameDTO} = require('./file.dto');
 const {FindFileByHashDTO} = require('./file.dto');
 const {RequestDTO} = require('./network.dto');
 
@@ -20,6 +21,27 @@ class SearchFileByHashDTO {
     const {request, payload} = raw;
     if (!(request instanceof RequestDTO)) throw new Error();
     if (!(payload instanceof FindFileByHashDTO)) throw new Error();
+    return true;
+  }
+}
+
+class SearchFilesByNameDTO {
+  constructor(raw) {
+    const {request, payload} = raw;
+    this.request = request;
+    this.payload = payload;
+  }
+
+  static fromRaw(raw) {
+    SearchFilesByNameDTO.validate(raw);
+    const dto = new SearchFilesByNameDTO(raw);
+    return dto;
+  }
+
+  static validate(raw) {
+    const {request, payload} = raw;
+    if (!(request instanceof RequestDTO)) throw new Error();
+    if (!(payload instanceof FindFilesByNameDTO)) throw new Error();
     return true;
   }
 }
@@ -46,5 +68,6 @@ class SearchFileResponseDTO {
 
 module.exports = {
   SearchFileByHashDTO,
+  SearchFilesByNameDTO,
   SearchFileResponseDTO,
 };

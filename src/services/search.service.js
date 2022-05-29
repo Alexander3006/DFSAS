@@ -1,5 +1,6 @@
 'use strict';
 
+const {SearchFilesByNameDTO} = require('./dto/search.dto');
 const {SearchFileByHashDTO} = require('./dto/search.dto');
 
 class SearchServiceError extends Error {}
@@ -21,6 +22,26 @@ class SearchService {
         await networkService.callback(request, fileModel).catch((err) => console.log(err));
       await networkService.broadcastRequestToPeers('FIND_FILE', request, payload);
       return fileModel;
+    } catch (err) {
+      console.log(err);
+      throw new SearchServiceError('Search file error');
+    }
+  }
+
+  async searchFilesByName(searchFilesByNameDTO) {
+    const {fileService, networkService} = this;
+    if (!(searchFilesByNameDTO instanceof SearchFilesByNameDTO))
+      throw new SearchServiceError('Invalid searh file dto');
+    const {request, payload} = searchFilesByNameDTO;
+    try {
+      const fileModels = await fileService.findFilesByName(payload);
+      await Promise.allSettled(
+        fileModels.map((fileModel) =>
+          networkService.callback(request, fileModel).catch((err) => console.log(err)),
+        ),
+      );
+      await networkService.broadcastRequestToPeers('FIND_FILE', request, payload);
+      return fileModels;
     } catch (err) {
       console.log(err);
       throw new SearchServiceError('Search file error');

@@ -1,6 +1,7 @@
 import {UnitOfWork} from '../infrastructure/storage/database/unit-of-work';
 import {FileStorage} from '../infrastructure/storage/file-system';
 import {FileModel} from '../models/file.model';
+import {FindFileByNameDTO} from './dto/file.dto';
 import {SaveFileDTO} from './dto/file.dto';
 import {FindFileByHashDTO} from './dto/file.dto';
 
@@ -12,6 +13,8 @@ export declare class FileService {
   constructor(container: {db: {unitOfWork: UnitOfWork}; fileStorage: FileStorage});
 
   public async findFileByHash(findFileByHashDTO: FindFileByHashDTO): Promise<FileModel | null>;
+
+  public async findFileByName(findFileByNameDTO: FindFileByNameDTO): Promise<FileModel>;
 
   public async getFileByHash(findFileByHashDTO: FindFileByHashDTO): Promise<ReadableStream | null>;
 

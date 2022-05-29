@@ -27,7 +27,7 @@ class FileModel {
     if (!notEmptyValue(name)) throw new FileModelError('Invalid file name');
     if (!notEmptyValue(hash)) throw new FileModelError('Invalid file hash');
     if (!Number.isInteger(size)) throw new FileModelError('Invalid file size');
-    if (!!owners && !owners.some((owner) => owner instanceof OwnerModel))
+    if (!!owners?.length && !owners.some((owner) => owner instanceof OwnerModel))
       throw new FileModelError('Invalid file owners');
     return true;
   }
@@ -74,11 +74,27 @@ const FileRepository = (connection) => {
 
     delete: async function ({hash}) {
       const fileModel = await this.findOne({hash}, false);
-      if (!fileModel || !!fileModel.owners) throw new FileModelError('Can not delete file');
+      if (!fileModel) throw new FileModelError('Can not delete file');
       const deleteFileQuery = 'DELETE FROM `files` WHERE `hash` = ?;';
       const deleteFileParams = [hash];
       await connection.query(deleteFileQuery, deleteFileParams);
       return fileModel;
+    },
+
+    find: async ({name}, lazy) => {
+      const ownerRepository = OwnerRepository(connection);
+      const searchFilesQuery = "SELECT * FROM `files` WHERE `name` LIKE CONCAT('%', ?, '%')";
+      const parameters = [name];
+      const fileModels = await connection.query(searchFilesQuery, parameters).then(([fileRaws]) =>
+        Promise.all(
+          fileRaws.map(async (fileRaw) => {
+            const owners = lazy ? null : await ownerRepository.find({fileId: fileRaw.id});
+            const fileModel = FileModel.fromRaw({...fileRaw, owners});
+            return fileModel;
+          }),
+        ),
+      );
+      return fileModels;
     },
   };
 };

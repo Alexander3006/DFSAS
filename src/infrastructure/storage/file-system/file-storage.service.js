@@ -122,10 +122,9 @@ class FileStorage {
   async checkFileExistence({filepath}) {
     try {
       const exist = await fs.promises.access(filepath);
-      return !!exist;
+      return true;
     } catch (err) {
-      console.log(err);
-      throw new FileStorageError('Check file existance error');
+      return false;
     }
   }
 

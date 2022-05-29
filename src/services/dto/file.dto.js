@@ -52,7 +52,33 @@ class SaveFileDTO {
   }
 }
 
+class FindFilesByNameDTO {
+  constructor(raw) {
+    const {address, name} = raw;
+    this.name = name;
+    this.address = address;
+  }
+
+  static fromRaw(raw) {
+    FindFilesByNameDTO.validate(raw);
+    const dto = new FindFilesByNameDTO(raw);
+    return dto;
+  }
+
+  static validate(raw) {
+    const {name, address} = raw;
+    if ((name?.length ?? 0) <= 5) throw new Error();
+    return true;
+  }
+
+  toMessage() {
+    const {name} = this;
+    return `${name}`;
+  }
+}
+
 module.exports = {
   FindFileByHashDTO,
   SaveFileDTO,
+  FindFilesByNameDTO,
 };

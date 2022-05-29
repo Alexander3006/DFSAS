@@ -39,7 +39,7 @@ const foundFileCallbackController = async (container, {connection, context}) => 
 
 module.exports = (container) =>
   new HttpEndpoint({
-    method: EndpointMethods.GET,
+    method: EndpointMethods.POST,
     path: '/node/file-found',
     handler: foundFileCallbackController.bind(null, container),
   });

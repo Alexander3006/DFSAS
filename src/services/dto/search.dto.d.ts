@@ -1,4 +1,5 @@
 import {FileModel} from '../../models/file.model';
+import {FindFilesByNameDTO} from './file.dto';
 import {FindFileByHashDTO} from './file.dto';
 import {RequestDTO} from './network.dto';
 import {NodeInfoDTO} from './node-info.dto';
@@ -16,6 +17,21 @@ export declare class SearchFileByHashDTO {
   public static fromRaw(raw: SearchFileByHashRaw): SearchFileByHashDTO;
 
   public static validate(raw: SearchFileByHashRaw): boolean;
+}
+
+type SearchFilesByNameRaw = {
+  request: RequestDTO;
+  payload: FindFileByNameDTO;
+};
+
+export declare class SearchFilesByNameDTO {
+  public readonly request: RequestDTO;
+  public readonly payload: FindFilesByNameDTO;
+  constructor(raw: SearchFilesByNameRaw);
+
+  public static fromRaw(raw: SearchFilesByNameRaw): SearchFilesByNameDTO;
+
+  public static validate(raw: SearchFilesByNameRaw): boolean;
 }
 
 type SearchFileResponseRaw = {
