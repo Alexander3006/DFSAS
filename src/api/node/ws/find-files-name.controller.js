@@ -32,6 +32,6 @@ const findFilesByNameController = async (container, {connection, context}) => {
 
 module.exports = (container) =>
   new WebSocketEndpoint({
-    path: 'FIND_FILE_BY_NAME',
+    path: 'FIND_FILES_BY_NAME',
     handler: findFilesByNameController.bind(null, container),
   });

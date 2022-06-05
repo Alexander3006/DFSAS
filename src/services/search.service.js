@@ -40,7 +40,7 @@ class SearchService {
           networkService.callback(request, fileModel).catch((err) => console.log(err)),
         ),
       );
-      await networkService.broadcastRequestToPeers('FIND_FILE_BY_NAME', request, payload);
+      await networkService.broadcastRequestToPeers('FIND_FILES_BY_NAME', request, payload);
       return fileModels;
     } catch (err) {
       console.log(err);
