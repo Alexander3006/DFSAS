@@ -20,7 +20,7 @@ class SearchService {
       const fileModel = await fileService.findFileByHash(payload);
       if (fileModel)
         await networkService.callback(request, fileModel).catch((err) => console.log(err));
-      await networkService.broadcastRequestToPeers('FIND_FILE', request, payload);
+      await networkService.broadcastRequestToPeers('FIND_FILE_BY_HASH', request, payload);
       return fileModel;
     } catch (err) {
       console.log(err);
@@ -40,7 +40,7 @@ class SearchService {
           networkService.callback(request, fileModel).catch((err) => console.log(err)),
         ),
       );
-      await networkService.broadcastRequestToPeers('FIND_FILE', request, payload);
+      await networkService.broadcastRequestToPeers('FIND_FILE_BY_NAME', request, payload);
       return fileModels;
     } catch (err) {
       console.log(err);

@@ -10,9 +10,10 @@ const useHttpNodeApi = (container) => {
 };
 
 const useWebSocketNodeApi = (container) => {
-  const {findFileController} = getWebSocketController(container);
+  const {findFileByHashController, findFilesByNameController} = getWebSocketController(container);
   const {networkRouter} = container;
-  networkRouter.registerEndpoint(findFileController);
+  networkRouter.registerEndpoint(findFileByHashController);
+  networkRouter.registerEndpoint(findFilesByNameController);
 };
 
 module.exports = {

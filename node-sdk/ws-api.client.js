@@ -127,7 +127,7 @@ class WsApiClient {
     }
   }
 
-  async searchFileByNameRequest({name, secret, timeout}) {
+  async searchFilesByNameRequest({name, secret, timeout}) {
     const {signatureService, httpApiClient} = this;
     try {
       const publicKey = await signatureService.getPublicKey(secret);

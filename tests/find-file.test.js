@@ -48,7 +48,9 @@ const searchFileByHashTest = async () => {
   }
 };
 
-const searchFileByNameTest = async () => {
+// searchFileByHashTest();
+
+const searchFilesByNameTest = async () => {
   console.log('Search file by name test starting');
   const NAME = 'test_file';
   try {
@@ -68,13 +70,12 @@ const searchFileByNameTest = async () => {
         wsApiClient.unsubscribe(WS_EVENTS.FILE_FOUND, onFileFound);
         wsApiClient.unsubscribe(WS_EVENTS.FILE_SEARCH_FINISHED, onSearchFinish);
         wsApiClient.unsubscribe(WS_EVENTS.ERROR, onError);
-        console.dir(err);
         rej(err);
       }
       wsApiClient.subscribe(WS_EVENTS.FILE_SEARCH_FINISHED, onSearchFinish);
       wsApiClient.subscribe(WS_EVENTS.ERROR, onError);
     });
-    await wsApiClient.searchFileByNameRequest({
+    await wsApiClient.searchFilesByNameRequest({
       name: NAME,
       secret: account.privateKey,
       timeout: 1000,
@@ -92,7 +93,9 @@ const searchFileByNameTest = async () => {
   }
 };
 
+searchFilesByNameTest();
+
 module.exports = {
   searchFileByHashTest,
-  searchFileByNameTest,
+  searchFilesByNameTest,
 };

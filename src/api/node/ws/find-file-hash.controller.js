@@ -3,7 +3,7 @@ const {FindFileByHashDTO} = require('../../../services/dto/file.dto');
 const {RequestDTO} = require('../../../services/dto/network.dto');
 const {SearchFileByHashDTO} = require('../../../services/dto/search.dto');
 
-const findFileController = async (container, {connection, context}) => {
+const findFileByHashController = async (container, {connection, context}) => {
   const {searchService} = container;
   try {
     const {
@@ -32,6 +32,6 @@ const findFileController = async (container, {connection, context}) => {
 
 module.exports = (container) =>
   new WebSocketEndpoint({
-    path: 'FIND_FILE',
-    handler: findFileController.bind(null, container),
+    path: 'FIND_FILE_BY_NAME',
+    handler: findFileByHashController.bind(null, container),
   });

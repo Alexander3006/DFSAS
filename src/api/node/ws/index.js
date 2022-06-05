@@ -1,7 +1,8 @@
 'use strict';
 
 const getWebSocketController = (container) => ({
-  findFileController: require('./find-file.controller')(container),
+  findFileByHashController: require('./find-file-hash.controller')(container),
+  findFilesByNameController: require('./find-files-name.controller')(container),
 });
 
 module.exports = getWebSocketController;

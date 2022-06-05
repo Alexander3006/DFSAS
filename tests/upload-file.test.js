@@ -23,6 +23,7 @@ const uploadFileTest = async () => {
       secret: account.privateKey,
     });
     const {name, hash} = result;
+    console.dir(result);
     assert.deepEqual(
       {name, hash},
       {name: 'TEST_FILE_NAME', hash: checksum},
@@ -37,6 +38,8 @@ const uploadFileTest = async () => {
     console.log('Upload file test completed');
   }
 };
+
+uploadFileTest();
 
 module.exports = {
   uploadFileTest,
